@@ -8,7 +8,11 @@ export default async function handler(req, res) {
 
   try {
     // 1. 抓 Google News RSS（後端直接抓，無 CORS 問題）
-    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
+    // 加上7天內篩選
+    const after = new Date();
+    after.setDate(after.getDate() - 7);
+    const afterStr = after.toISOString().split('T')[0];
+    const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}+after:${afterStr}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
     const rssRes = await fetch(rssUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' }
     });
